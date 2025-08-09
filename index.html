@@ -4,26 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Quant Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css" />
-  <!-- 3D Force Graph -->
-  <script src="https://unpkg.com/3d-force-graph@1.70.15/dist/3d-force-graph.min.js"></script>
 </head>
-<body>
-  <header class="site-header">
-    <div class="brand">
-      <span id="your-name">Your Name</span>
-      <span class="divider">•</span>
-      <span id="tagline">Quant projects</span>
-    </div>
+<body class="home">
+  <header class="hero">
+    <h1 class="hero__name" id="your-name">Your Name</h1>
+    <div class="hero__sub">Projects</div>
   </header>
 
-  <main>
-    <div id="graph"></div>
+  <main class="canvas-wrap">
+    <canvas id="cosmic"></canvas>
     <div class="legend" id="legend"></div>
+    <div id="tooltip" class="tooltip" style="display:none;"></div>
   </main>
 
   <footer class="site-footer">
-    <span>Built with GitHub Pages. Click a node to open the project.</span>
+    <span>Click a dot to open a project.</span>
   </footer>
 
   <script src="js/home.js"></script>
