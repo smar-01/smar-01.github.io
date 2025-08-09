@@ -1,9 +1,22 @@
 async function main(){
-  const resp = await fetch('projects.json');
-  const data = await resp.json();
-
+  // No external packages. Pure HTML5 canvas + vanilla JS.
+  let data;
+  try {
+    data = await (await fetch('projects.json', { cache: 'no-store' })).json();
+  } catch (e) {
+    console.warn('projects.json failed to load, using placeholders', e);
+    data = {
+      name: 'Your Name',
+      categories: [{id:'a',label:'Category A'},{id:'b',label:'Category B'}],
+      projects: [
+        { title:'Sample 1', slug:'s1', categories:['a'] },
+        { title:'Sample 2', slug:'s2', categories:['b'] }
+      ]
+    };
+  }
   document.getElementById('your-name').textContent = data.name || 'Your Name';
 
+  // Legend
   const legend = document.getElementById('legend');
   const rings = data.categories.map((c,i)=>({...c, idx:i}));
   rings.forEach((r,i)=>{
@@ -13,57 +26,57 @@ async function main(){
     el.append(dot, label); legend.appendChild(el);
   });
 
+  // Canvas
   const canvas = document.getElementById('cosmic');
   const ctx = canvas.getContext('2d', { alpha: false });
-  function resize(){
-    const rect = canvas.getBoundingClientRect();
+  function sizeCanvas(){
     const dpr = window.devicePixelRatio || 1;
-    canvas.width = Math.floor(rect.width * dpr);
-    canvas.height = Math.floor(rect.height * dpr);
+    const cssW = canvas.clientWidth;
+    const cssH = canvas.clientHeight;
+    canvas.width = Math.floor(cssW * dpr);
+    canvas.height = Math.floor(cssH * dpr);
     ctx.setTransform(dpr,0,0,dpr,0,0);
   }
-  resize(); window.addEventListener('resize', resize);
+  sizeCanvas(); window.addEventListener('resize', sizeCanvas);
 
-  const nodes = data.projects.map((p, i)=> ({
-    id: p.slug,
-    title: p.title,
-    categories: p.categories,
-    url: `project.html?slug=${encodeURIComponent(p.slug)}`,
-    angle: (i / data.projects.length) * Math.PI*2 + Math.random()*0.5,
+  // Nodes
+  const nodes = (data.projects || []).map((p, i)=> ({
+    id: p.slug || ('p'+i),
+    title: p.title || 'Untitled',
+    categories: p.categories || [],
+    url: p.slug ? `project.html?slug=${encodeURIComponent(p.slug)}` : '#',
+    angle: (i / Math.max(1,(data.projects||[]).length)) * Math.PI*2 + Math.random()*0.5,
     jitter: Math.random()*1000
   }));
 
   function colorFor(id){
     const i = rings.findIndex(r=>r.id===id);
-    const palette = ['#4c78a8','#f58518','#54a24b','#e45756','#72b7b2','#b279a2','#ff9da6','#9d755d','#bab0ab'];
+    const palette = ['#2d5f9a','#d67118','#2f8a3e','#be3c3e','#4aa3a0','#8c5a8c','#cc6b75','#7a624e','#8b8f8f'];
     return palette[(i>=0?i:0) % palette.length];
   }
 
-  nodes.forEach(n=>{
-    const primary = n.categories?.[0];
-    n.color = colorFor(primary);
-  });
+  nodes.forEach(n=> n.color = colorFor(n.categories?.[0]));
 
+  // Plane geometry helpers
   const plane = {
-    cx: () => canvas.width / (window.devicePixelRatio||1) / 2,
-    cy: () => canvas.height / (window.devicePixelRatio||1) / 2,
-    rx: (k)=> (Math.min(canvas.width, canvas.height) / (window.devicePixelRatio||1)) * 0.18 * k,
-    ry: (k)=> (Math.min(canvas.width, canvas.height) / (window.devicePixelRatio||1)) * 0.10 * k
+    cx: () => canvas.clientWidth / 2,
+    cy: () => canvas.clientHeight / 2,
+    rx: (k)=> Math.min(canvas.clientWidth, canvas.clientHeight) * 0.18 * k,
+    ry: (k)=> Math.min(canvas.clientWidth, canvas.clientHeight) * 0.10 * k
   };
-
   function ringIndex(n){
-    const primary = n.categories?.[0];
-    const idx = rings.findIndex(r=>r.id===primary);
+    const idx = rings.findIndex(r=>r.id===(n.categories?.[0]));
     return idx>=0 ? idx+1 : 1;
   }
-
   function place(n){
     const ring = ringIndex(n);
-    const x = plane.cx() + plane.rx(ring) * Math.cos(n.angle);
-    const y = plane.cy() + plane.ry(ring) * Math.sin(n.angle);
-    return {x,y};
+    return {
+      x: plane.cx() + plane.rx(ring) * Math.cos(n.angle),
+      y: plane.cy() + plane.ry(ring) * Math.sin(n.angle)
+    };
   }
 
+  // Interaction
   let hover = null;
   canvas.addEventListener('mousemove', e=>{
     const rect = canvas.getBoundingClientRect();
@@ -73,9 +86,7 @@ async function main(){
     showTooltip(hover, x, y);
   });
   canvas.addEventListener('mouseleave', ()=>{ hover=null; hideTooltip(); });
-  canvas.addEventListener('click', ()=>{
-    if(hover){ window.location.href = hover.url; }
-  });
+  canvas.addEventListener('click', ()=>{ if(hover && hover.url!=='#') location.href = hover.url; });
 
   function hitTest(x,y){
     const r = 10;
@@ -91,61 +102,48 @@ async function main(){
   function showTooltip(n, x, y){
     if(!n){ tip.style.display='none'; return; }
     tip.textContent = n.title;
-    tip.style.left = x+'px';
-    tip.style.top = y+'px';
-    tip.style.display='block';
+    tip.style.left = x+'px'; tip.style.top = y+'px'; tip.style.display='block';
   }
   function hideTooltip(){ tip.style.display='none'; }
 
-  let t0 = performance.now();
-  function frame(t){
-    t0 = t;
-    render(t);
-    requestAnimationFrame(frame);
-  }
-
+  // Render
   function render(t){
-    const w = canvas.width/(window.devicePixelRatio||1), h = canvas.height/(window.devicePixelRatio||1);
+    const w = canvas.clientWidth, h = canvas.clientHeight;
     ctx.clearRect(0,0,w,h);
 
+    // dashed ellipses
     ctx.save();
-    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--ring') || '#e7e2db';
+    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--ring') || '#dcd6cd';
     ctx.lineWidth = 1;
+    ctx.setLineDash([4,6]);
     for(let k=1;k<=Math.max(1,rings.length);k++){
-      ctx.beginPath();
-      const rx = plane.rx(k), ry = plane.ry(k);
-      ellipse(ctx, plane.cx(), plane.cy(), rx, ry);
-      ctx.setLineDash([4,6]);
+      ellipse(ctx, plane.cx(), plane.cy(), plane.rx(k), plane.ry(k));
       ctx.stroke();
     }
     ctx.restore();
 
+    // dots
     for(const n of nodes){
       const p = place(n);
-      const a = 0.75 + 0.25 * Math.sin((t*0.001) + n.jitter);
-      const r = hover===n ? 4 : 3;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, r, 0, Math.PI*2);
-      ctx.fillStyle = withAlpha(n.color, a);
-      ctx.fill();
+      const a = 0.8 + 0.2 * Math.sin((t*0.001) + n.jitter);
+      const r = hover===n ? 4 : 2.5;
+      ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2);
+      ctx.fillStyle = withAlpha(n.color, a); ctx.fill();
       if(hover===n){
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, r+3, 0, Math.PI*2);
-        ctx.strokeStyle = n.color; ctx.lineWidth = 1;
-        ctx.stroke();
+        ctx.beginPath(); ctx.arc(p.x, p.y, r+3, 0, Math.PI*2);
+        ctx.strokeStyle = n.color; ctx.lineWidth = 1; ctx.stroke();
       }
     }
+
+    requestAnimationFrame(render);
   }
 
   function ellipse(ctx, cx, cy, rx, ry){
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.scale(rx, ry);
     ctx.beginPath();
+    ctx.save(); ctx.translate(cx, cy); ctx.scale(rx, ry);
     ctx.arc(0,0,1,0,Math.PI*2);
     ctx.restore();
   }
-
   function withAlpha(hex, a){
     const c = hex.replace('#','');
     const bigint = parseInt(c,16);
@@ -153,7 +151,7 @@ async function main(){
     return `rgba(${r},${g},${b},${a})`;
   }
 
-  requestAnimationFrame(frame);
+  requestAnimationFrame(render);
 }
 
 main();
