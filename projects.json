@@ -1,0 +1,63 @@
+{
+  "name": "Your Name",
+  "tagline": "Quant projects",
+  "categories": [
+    {
+      "id": "ml",
+      "label": "Machine Learning"
+    },
+    {
+      "id": "time-series",
+      "label": "Time Series"
+    },
+    {
+      "id": "derivatives",
+      "label": "Derivatives"
+    },
+    {
+      "id": "theory",
+      "label": "Market Theory"
+    }
+  ],
+  "projects": [
+    {
+      "title": "GBM Monte Carlo Simulator",
+      "slug": "gbm-monte-carlo",
+      "categories": [
+        "theory",
+        "time-series"
+      ],
+      "github": "https://github.com/you/gbm-monte-carlo",
+      "markdown": "projects/gbm-monte-carlo.md"
+    },
+    {
+      "title": "AR(p) Intraday Momentum",
+      "slug": "ar-intraday-momentum",
+      "categories": [
+        "time-series"
+      ],
+      "github": "https://github.com/you/ar-momentum",
+      "markdown": "projects/ar-intraday-momentum.md"
+    },
+    {
+      "title": "Deep Gamma-Delta Hedging",
+      "slug": "deep-gamma-delta-hedging",
+      "categories": [
+        "derivatives",
+        "ml"
+      ],
+      "github": "https://github.com/you/deep-hedging",
+      "markdown": "projects/deep-gamma-delta-hedging.md"
+    },
+    {
+      "title": "Fractal Market Regimes (Hurst)",
+      "slug": "fractal-market-regimes",
+      "categories": [
+        "theory",
+        "time-series"
+      ],
+      "github": "https://github.com/you/fractal-regimes",
+      "markdown": "projects/fractal-market-regimes.md"
+    }
+  ]
+}
