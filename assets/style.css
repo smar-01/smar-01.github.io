@@ -3,24 +3,25 @@
   --bg:#f7f5f2;
   --ink:#0d0d0d;
   --muted:#7b7b7b;
-  --ring:#dcd6cd;
+  --ring:#d8d2c9;
 }
 html,body{height:100%;margin:0;overflow:hidden}
 body{background:var(--bg);color:var(--ink);font:16px/1.6 Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif}
 
-/* Header */
 .hero{padding:28px 16px 8px;text-align:center}
 .hero__name{font-family:'Playfair Display', serif;font-size:44px;line-height:1.15;margin:0}
 .hero__sub{margin-top:6px;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 
-/* Canvas area fills whatever is left; no scroll */
-.canvas-wrap{position:relative;width:100vw;height:calc(100vh - 88px); /* 88px ≈ header */}
-#cosmic{width:100%;height:100%;display:block;border-top:1px solid #efece7;
-  background:radial-gradient(ellipse at 50% 40%,#faf8f5 0%,#f6f3ef 60%,#f3efe9 100%);
-}
+.stage{position:relative;width:100vw;height:calc(100vh - 88px);}
+.stage > canvas, .stage > .particles{position:absolute;inset:0;display:block}
 
-.legend{position:absolute;left:0;right:0;bottom:10px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:0 10px}
+/* z-order: guides at bottom, particles, then projects hover layer */
+#guides{z-index:1}
+#tsparticles{z-index:2}
+#projects{z-index:3}
+
+.legend{position:absolute;left:0;right:0;bottom:10px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:0 10px;z-index:4}
 .legend .key{display:flex;align-items:center;gap:6px;padding:6px 10px;border:1px dashed var(--ring);border-radius:999px;background:rgba(255,255,255,.6);backdrop-filter:saturate(140%) blur(4px)}
 .legend .dot{width:10px;height:10px;border-radius:50%}
 
-.tooltip{position:absolute;padding:6px 10px;border-radius:8px;background:#111;color:#fff;font-size:12px;pointer-events:none;transform:translate(-50%,-130%);white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.tooltip{position:absolute;padding:6px 10px;border-radius:8px;background:#111;color:#fff;font-size:12px;pointer-events:none;transform:translate(-50%,-130%);white-space:nowrap;box-shadow:0 6px 20px rgba(0,0,0,.08);z-index:5}

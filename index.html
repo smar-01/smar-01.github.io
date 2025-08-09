@@ -8,19 +8,21 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/style.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/tsparticles@3/tsparticles.bundle.min.js"></script>
+  <script defer src="js/home.js"></script>
 </head>
-<body class="home">
-  <header class="hero" id="hero">
+<body>
+  <header class="hero">
     <h1 class="hero__name" id="your-name">Your Name</h1>
     <div class="hero__sub">Projects</div>
   </header>
 
-  <main class="canvas-wrap">
-    <canvas id="cosmic"></canvas>
-    <div class="legend" id="legend"></div>
+  <main class="stage">
+    <canvas id="guides"></canvas>
+    <div id="tsparticles" class="particles"></div>
+    <canvas id="projects"></canvas>
     <div id="tooltip" class="tooltip" style="display:none;"></div>
+    <div class="legend" id="legend"></div>
   </main>
-
-  <script src="js/home.js"></script>
 </body>
 </html>

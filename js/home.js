@@ -1,19 +1,10 @@
+document.addEventListener('DOMContentLoaded', () => main());
+
 async function main(){
-  // No external packages. Pure HTML5 canvas + vanilla JS.
-  let data;
-  try {
-    data = await (await fetch('projects.json', { cache: 'no-store' })).json();
-  } catch (e) {
-    console.warn('projects.json failed to load, using placeholders', e);
-    data = {
-      name: 'Your Name',
-      categories: [{id:'a',label:'Category A'},{id:'b',label:'Category B'}],
-      projects: [
-        { title:'Sample 1', slug:'s1', categories:['a'] },
-        { title:'Sample 2', slug:'s2', categories:['b'] }
-      ]
-    };
-  }
+  const resp = await fetch('projects.json', { cache: 'no-store' });
+  const data = await resp.json();
+
+  // Header
   document.getElementById('your-name').textContent = data.name || 'Your Name';
 
   // Legend
@@ -26,132 +17,160 @@ async function main(){
     el.append(dot, label); legend.appendChild(el);
   });
 
-  // Canvas
-  const canvas = document.getElementById('cosmic');
-  const ctx = canvas.getContext('2d', { alpha: false });
-  function sizeCanvas(){
-    const dpr = window.devicePixelRatio || 1;
-    const cssW = canvas.clientWidth;
-    const cssH = canvas.clientHeight;
-    canvas.width = Math.floor(cssW * dpr);
-    canvas.height = Math.floor(cssH * dpr);
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-  }
-  sizeCanvas(); window.addEventListener('resize', sizeCanvas);
+  // Stage sizing
+  const guides = document.getElementById('guides');
+  const projects = document.getElementById('projects');
+  const particlesDiv = document.getElementById('tsparticles');
+  const gctx = guides.getContext('2d');
+  const pctx = projects.getContext('2d');
 
-  // Nodes
-  const nodes = (data.projects || []).map((p, i)=> ({
-    id: p.slug || ('p'+i),
-    title: p.title || 'Untitled',
-    categories: p.categories || [],
-    url: p.slug ? `project.html?slug=${encodeURIComponent(p.slug)}` : '#',
-    angle: (i / Math.max(1,(data.projects||[]).length)) * Math.PI*2 + Math.random()*0.5,
-    jitter: Math.random()*1000
+  function sizeAll(){
+    [guides, projects].forEach(cv => {
+      const dpr = window.devicePixelRatio || 1;
+      cv.width = Math.floor(cv.clientWidth * dpr);
+      cv.height = Math.floor(cv.clientHeight * dpr);
+      const ctx = cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+    });
+    // particles container follows size via CSS (absolute inset:0)
+    drawGuides();
+  }
+  sizeAll(); window.addEventListener('resize', sizeAll);
+
+  // Guide rings (dashed ellipses)
+  function drawGuides(){
+    const w = guides.clientWidth, h = guides.clientHeight;
+    gctx.clearRect(0,0,w,h);
+    const cx = w/2, cy = h/2;
+    const maxR = Math.min(w,h);
+    const rxBase = maxR*0.18, ryBase = maxR*0.10;
+    gctx.save();
+    gctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--ring') || '#d8d2c9';
+    gctx.setLineDash([5,7]);
+    gctx.lineWidth = 1;
+    for(let k=1;k<=Math.max(1,rings.length);k++){
+      ellipse(gctx, cx, cy, rxBase*k, ryBase*k);
+      gctx.stroke();
+    }
+    gctx.restore();
+  }
+  function ellipse(ctx, cx, cy, rx, ry){
+    ctx.beginPath(); ctx.save(); ctx.translate(cx,cy); ctx.scale(rx,ry); ctx.arc(0,0,1,0,Math.PI*2); ctx.restore();
+  }
+
+  // Project dots — orbiting with trail on top canvas
+  const nodes = data.projects.map((p, i)=> ({
+    id: p.slug,
+    title: p.title,
+    url: `project.html?slug=${encodeURIComponent(p.slug)}`,
+    categories: p.categories,
+    color: colorFor(p.categories?.[0]),
+    angle: (i / data.projects.length) * Math.PI*2,
+    speed: 0.12 + Math.random()*0.08, // radians/sec scaled by ellipse
   }));
 
-  function colorFor(id){
-    const i = rings.findIndex(r=>r.id===id);
-    const palette = ['#2d5f9a','#d67118','#2f8a3e','#be3c3e','#4aa3a0','#8c5a8c','#cc6b75','#7a624e','#8b8f8f'];
-    return palette[(i>=0?i:0) % palette.length];
+  function plane(){
+    const w = projects.clientWidth, h = projects.clientHeight;
+    const maxR = Math.min(w,h);
+    return {
+      cx: w/2, cy: h/2,
+      rx: k => maxR*0.18*k,
+      ry: k => maxR*0.10*k
+    };
   }
-
-  nodes.forEach(n=> n.color = colorFor(n.categories?.[0]));
-
-  // Plane geometry helpers
-  const plane = {
-    cx: () => canvas.clientWidth / 2,
-    cy: () => canvas.clientHeight / 2,
-    rx: (k)=> Math.min(canvas.clientWidth, canvas.clientHeight) * 0.18 * k,
-    ry: (k)=> Math.min(canvas.clientWidth, canvas.clientHeight) * 0.10 * k
-  };
   function ringIndex(n){
     const idx = rings.findIndex(r=>r.id===(n.categories?.[0]));
     return idx>=0 ? idx+1 : 1;
   }
-  function place(n){
+  function pos(n, t){
+    const pl = plane();
     const ring = ringIndex(n);
+    const a = n.angle + t * (n.speed * (0.08 + ring*0.04)); // slower outer rings
     return {
-      x: plane.cx() + plane.rx(ring) * Math.cos(n.angle),
-      y: plane.cy() + plane.ry(ring) * Math.sin(n.angle)
+      x: pl.cx + pl.rx(ring) * Math.cos(a),
+      y: pl.cy + pl.ry(ring) * Math.sin(a)
     };
   }
 
-  // Interaction
+  // Trail effect: paint a translucent rect each frame so trails linger
+  // "medium intensity, long linger": low alpha clear
+  const fadeAlpha = 0.06; // smaller -> longer trails
+  let tStart = performance.now();
   let hover = null;
-  canvas.addEventListener('mousemove', e=>{
-    const rect = canvas.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    hover = hitTest(x,y);
+
+  projects.addEventListener('mousemove', e=>{
+    const rect = projects.getBoundingClientRect();
+    const x = e.clientX - rect.left, y = e.clientY - rect.top;
+    hover = hit(x,y);
     showTooltip(hover, x, y);
   });
-  canvas.addEventListener('mouseleave', ()=>{ hover=null; hideTooltip(); });
-  canvas.addEventListener('click', ()=>{ if(hover && hover.url!=='#') location.href = hover.url; });
+  projects.addEventListener('mouseleave', ()=>{ hover=null; hideTooltip(); });
+  projects.addEventListener('click', ()=>{ if(hover) location.href = hover.url; });
 
-  function hitTest(x,y){
-    const r = 10;
+  function hit(x,y){
     for(const n of nodes){
-      const p = place(n);
-      const dx = x - p.x, dy = y - p.y;
-      if(dx*dx + dy*dy <= r*r) return n;
+      const p = pos(n, (performance.now()-tStart)/1000);
+      const dx = x-p.x, dy=y-p.y;
+      if(dx*dx+dy*dy<=10*10) return n;
     }
     return null;
   }
-
   const tip = document.getElementById('tooltip');
-  function showTooltip(n, x, y){
+  function showTooltip(n,x,y){
     if(!n){ tip.style.display='none'; return; }
-    tip.textContent = n.title;
-    tip.style.left = x+'px'; tip.style.top = y+'px'; tip.style.display='block';
+    tip.textContent = n.title; tip.style.left = x+'px'; tip.style.top = y+'px'; tip.style.display='block';
   }
   function hideTooltip(){ tip.style.display='none'; }
 
-  // Render
-  function render(t){
-    const w = canvas.clientWidth, h = canvas.clientHeight;
-    ctx.clearRect(0,0,w,h);
+  function drawProjects(tMs){
+    const t = (tMs - tStart)/1000;
+    const w = projects.clientWidth, h = projects.clientHeight;
+    // fade
+    pctx.fillStyle = `rgba(247,245,242,${fadeAlpha})`; // bone bg
+    pctx.fillRect(0,0,w,h);
 
-    // dashed ellipses
-    ctx.save();
-    ctx.strokeStyle = getComputedStyle(document.documentElement).getPropertyValue('--ring') || '#dcd6cd';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([4,6]);
-    for(let k=1;k<=Math.max(1,rings.length);k++){
-      ellipse(ctx, plane.cx(), plane.cy(), plane.rx(k), plane.ry(k));
-      ctx.stroke();
-    }
-    ctx.restore();
-
-    // dots
+    // draw dots
     for(const n of nodes){
-      const p = place(n);
-      const a = 0.8 + 0.2 * Math.sin((t*0.001) + n.jitter);
-      const r = hover===n ? 4 : 2.5;
-      ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI*2);
-      ctx.fillStyle = withAlpha(n.color, a); ctx.fill();
+      const p = pos(n,t);
+      const r = (hover===n)? 4 : 3;
+      pctx.beginPath(); pctx.arc(p.x,p.y,r,0,Math.PI*2);
+      pctx.fillStyle = n.color; pctx.fill();
       if(hover===n){
-        ctx.beginPath(); ctx.arc(p.x, p.y, r+3, 0, Math.PI*2);
-        ctx.strokeStyle = n.color; ctx.lineWidth = 1; ctx.stroke();
+        pctx.beginPath(); pctx.arc(p.x,p.y,r+3,0,Math.PI*2);
+        pctx.strokeStyle = n.color; pctx.lineWidth = 1; pctx.stroke();
       }
     }
-
-    requestAnimationFrame(render);
+    requestAnimationFrame(drawProjects);
   }
 
-  function ellipse(ctx, cx, cy, rx, ry){
-    ctx.beginPath();
-    ctx.save(); ctx.translate(cx, cy); ctx.scale(rx, ry);
-    ctx.arc(0,0,1,0,Math.PI*2);
-    ctx.restore();
-  }
-  function withAlpha(hex, a){
-    const c = hex.replace('#','');
-    const bigint = parseInt(c,16);
-    const r = (bigint>>16)&255, g=(bigint>>8)&255, b=bigint&255;
-    return `rgba(${r},${g},${b},${a})`;
-  }
+  // Ambient layer with tsParticles
+  const palette = ['#4c78a8','#f58518','#54a24b','#e45756','#72b7b2','#b279a2','#ff9da6','#9d755d','#bab0ab'];
+  await tsParticles.load("tsparticles", {
+    background: { color: { value: "#f7f5f2" } },
+    fullScreen: { enable: false },
+    detectRetina: true,
+    fpsLimit: 60,
+    particles: {
+      number: { value: 100, density: { enable: true, area: 900 } },
+      size: { value: { min: 1, max: 1.8 } },
+      color: { value: "#9aa0a6" },
+      opacity: { value: 0.5 },
+      move: { enable: true, speed: 0.2, direction: "none", outModes: { default: "bounce" }, random: true, straight: false },
+      links: { enable: true, distance: 110, opacity: 0.12, width: 1, color: "#8a8a8a" },
+      shadow: { enable: false },
+      shape: { type: "circle" },
+      trail: { enable: true, length: 12, fill: { color: "#f7f5f2" } } // long linger, medium visibility
+    },
+    interactivity: {
+      events: { onHover: { enable: false }, onClick: { enable: false }, resize: true }
+    }
+  });
 
-  requestAnimationFrame(render);
+  // kick off draw
+  requestAnimationFrame(drawProjects);
+
+  function colorFor(id){
+    const i = rings.findIndex(r=>r.id===id);
+    const palette = ['#4c78a8','#f58518','#54a24b','#e45756','#72b7b2','#b279a2','#ff9da6','#9d755d','#bab0ab'];
+    return palette[(i>=0?i:0) % palette.length];
+  }
 }
-
-main();
