@@ -102,6 +102,7 @@ body {
     background-color: #003d82;
 }
 
+<<<<<<< HEAD
 /* NEW: Tooltip for project info on hover */
 .project-node .tooltip {
     visibility: hidden;
@@ -148,3 +149,63 @@ body {
 .markdown-content p { margin-bottom: 1rem; }
 .markdown-content pre { background-color: #f4f4f4; padding: 1rem; border-radius: 5px; overflow-x: auto; }
 .markdown-content code { font-family: 'Courier New', Courier, monospace; }
+=======
+
+/* --- Project Page Specific Styles --- */
+
+/* A dedicated header for the home button */
+.project-page-header {
+    width: 100%;
+    background-color: #fdfdfb; /* Slightly different color to create separation */
+    border-bottom: 1px solid #eee;
+    padding: 1rem 0;
+    /* THIS is the line I removed to fix the spacing */
+    /* margin-bottom: 2rem; */ 
+}
+
+.home-button {
+    font-weight: bold;
+    color: #555;
+    text-decoration: none;
+    padding: 8px 15px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+    display: inline-block; /* Allows padding and background */
+}
+
+.home-button:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.markdown-content {
+    width: 100%;
+    line-height: 1.7; /* Improves readability */
+}
+
+.markdown-content h1 {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+.markdown-content h2 {
+    margin-top: 2.5rem;
+}
+
+.markdown-content p {
+    margin-bottom: 1rem;
+}
+
+/* Style for code blocks to look like they do in markdown */
+.markdown-content pre {
+    background-color: #f4f4f4;
+    padding: 1rem;
+    border-radius: 5px;
+    overflow-x: auto; /* Adds scrollbar if code is wide */
+}
+
+.markdown-content code {
+    font-family: 'Courier New', Courier, monospace;
+}
+>>>>>>> parent of b1b267e (d)
