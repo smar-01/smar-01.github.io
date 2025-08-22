@@ -60,6 +60,14 @@ body {
     color: #003d82;
 }
 
+/* NEW: Style for the category text on the homepage */
+.project-category {
+    font-size: 1rem;
+    color: #555;
+    font-style: italic;
+    margin-left: 8px;
+}
+
 
 /* --- Project Page Specific Styles --- */
 
@@ -69,8 +77,6 @@ body {
     background-color: #fdfdfb; /* Slightly different color to create separation */
     border-bottom: 1px solid #eee;
     padding: 1rem 0;
-    /* THIS is the line I removed to fix the spacing */
-    /* margin-bottom: 2rem; */ 
 }
 
 .home-button {
@@ -97,6 +103,19 @@ body {
     border-bottom: 2px solid #eee;
     padding-bottom: 10px;
     margin-top: 0;
+    margin-bottom: 0.5rem; /* Reduced margin to bring tag closer */
+}
+
+/* NEW: Style for the category tag box */
+.category-tag {
+    display: inline-block;
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 2.5rem; /* Space between tag and first paragraph */
 }
 
 .markdown-content h2 {
