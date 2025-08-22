@@ -8,22 +8,20 @@ body {
     font-family: 'Georgia', 'Times New Roman', serif; /* Professional, low-serif font */
     color: #333; /* Dark gray text for readability */
     margin: 0;
-    padding: 2rem;
+    padding: 0; /* Removed default body padding */
 }
 
 .container {
     max-width: 800px;
     margin: 0 auto; /* Centers the content horizontally */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    min-height: 80vh; /* Ensures content is vertically centered on the page */
+    padding: 2rem; /* Add padding here instead of on the body */
 }
 
 /* --- Homepage Specific Styles --- */
 .homepage-header {
     text-align: center;
-    margin-bottom: 3rem;
+    padding-top: 3rem; /* Pushes the header down from the top */
+    padding-bottom: 3rem;
 }
 
 .homepage-header h1 {
@@ -64,10 +62,18 @@ body {
 
 
 /* --- Project Page Specific Styles --- */
+
+/* NEW: A dedicated header for the home button */
+.project-page-header {
+    width: 100%;
+    background-color: #fdfdfb; /* Slightly different color to create separation */
+    border-bottom: 1px solid #eee;
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+}
+
 .home-button {
-    position: absolute; /* Changed from fixed to absolute */
-    top: 2rem;
-    left: 2rem;
+    /* REMOVED position: absolute and other positioning */
     font-weight: bold;
     color: #555;
     text-decoration: none;
@@ -75,6 +81,8 @@ body {
     background-color: rgba(0, 0, 0, 0.05);
     border-radius: 5px;
     transition: background-color 0.2s ease;
+    /* We'll use the .container to position this */
+    display: inline-block; /* Allows padding and background */
 }
 
 .home-button:hover {
