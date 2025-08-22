@@ -1,0 +1,52 @@
+<!-- 
+    File: project1.html (Template for your project pages)
+    COPY this file to create project2.html, project3.html, etc.
+    Then, just change the content inside the <main> section.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project 1</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- This button returns to the homepage -->
+    <a href="index.html" class="home-button">HOME</a>
+
+    <div class="container">
+        <!-- All your project content goes inside this <main> tag -->
+        <main class="markdown-content">
+            
+            <h1>Project 1: Title of Your First Project</h1>
+
+            <p>
+                This is the introduction to my project. It solves a very interesting problem by using
+                advanced techniques in data analysis and machine learning. The goal was to build a
+                model that could predict market trends with high accuracy.
+            </p>
+
+            <h2>Methodology</h2>
+            <p>
+                The first step was data collection. I gathered data from several APIs, cleaned it, and
+                prepared it for analysis. I used Python with libraries like Pandas and NumPy for this.
+            </p>
+
+            <pre><code># You can include code blocks like this
+import pandas as pd
+
+def load_data(filepath):
+    df = pd.read_csv(filepath)
+    return df</code></pre>
+
+            <h2>Results</h2>
+            <p>
+                The final model achieved an accuracy of 92% on the test dataset, which was a significant
+                improvement over the existing baseline.
+            </p>
+
+        </main>
+    </div>
+</body>
+</html>
