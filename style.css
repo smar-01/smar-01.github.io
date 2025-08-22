@@ -63,17 +63,17 @@ body {
 
 /* --- Project Page Specific Styles --- */
 
-/* NEW: A dedicated header for the home button */
+/* A dedicated header for the home button */
 .project-page-header {
     width: 100%;
     background-color: #fdfdfb; /* Slightly different color to create separation */
     border-bottom: 1px solid #eee;
     padding: 1rem 0;
-    margin-bottom: 2rem;
+    /* THIS is the line I removed to fix the spacing */
+    /* margin-bottom: 2rem; */ 
 }
 
 .home-button {
-    /* REMOVED position: absolute and other positioning */
     font-weight: bold;
     color: #555;
     text-decoration: none;
@@ -81,7 +81,6 @@ body {
     background-color: rgba(0, 0, 0, 0.05);
     border-radius: 5px;
     transition: background-color 0.2s ease;
-    /* We'll use the .container to position this */
     display: inline-block; /* Allows padding and background */
 }
 
