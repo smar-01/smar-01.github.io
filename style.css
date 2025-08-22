@@ -15,7 +15,7 @@ body {
 
 /* --- Homepage Styles --- */
 .homepage-header {
-    text-align: center; /* This centers the header text */
+    text-align: center;
     padding-top: 3rem;
     padding-bottom: 3rem;
 }
@@ -32,11 +32,11 @@ body {
 }
 
 .project-list {
-    text-align: center; /* This centers the list text */
+    text-align: center;
 }
 
 .project-list ul {
-    list-style: none; /* This removes the bullet points */
+    list-style: none;
     padding: 0;
 }
 
@@ -54,6 +54,13 @@ body {
 .project-list a:hover {
     text-decoration: underline;
     color: #003d82;
+}
+
+.project-category {
+    font-size: 1rem;
+    color: #555;
+    font-style: italic;
+    margin-left: 8px;
 }
 
 /* --- Project Page Styles --- */
@@ -88,6 +95,18 @@ body {
     border-bottom: 2px solid #eee;
     padding-bottom: 10px;
     margin-top: 0;
+    margin-bottom: 0.5rem;
+}
+
+.category-tag {
+    display: inline-block;
+    background-color: rgba(0, 0, 0, 0.05);
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 2.5rem;
 }
 
 .markdown-content h2 {
