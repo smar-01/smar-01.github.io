@@ -10,16 +10,24 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <!-- This header remains the same -->
     <header class="homepage-header">
         <h1>Portfolio</h1>
         <h2>Samuel Marriott</h2>
     </header>
 
-    <!-- The project list is now replaced by this container for the animation -->
-    <div id="particles-js"></div>
+    <!-- This is the new, contained area for the animation -->
+    <div id="animation-container">
+        <!-- The particles.js background will be generated here -->
+        <div id="particles-js"></div>
+        <!-- The clickable project nodes will be injected here -->
+        <ul id="project-nodes"></ul>
+    </div>
 
     <!-- The particles.js library -->
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <!-- The anime.js library for animating the nodes -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <!-- Your custom animation script -->
     <script src="animation.js"></script>
 </body>
