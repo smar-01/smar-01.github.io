@@ -2,79 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Project</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project</title> <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/showdown/dist/showdown.min.js"></script>
 </head>
 <body>
+    <a href="index.html" class="home-button">HOME</a>
+    
     <div class="project-container">
-        <aside class="table-of-contents">
-            <h3>Chapters</h3>
-            <ul id="toc-list"></ul>
-        </aside>
-
-        <main class="project-content">
-            <div class="project-header">
-                <a href="index.html" class="home-button">&larr; Return to Home</a>
-                <h1 id="project-title"></h1>
-                <a id="github-link" href="#" target="_blank">View on GitHub</a>
-                <div id="project-tags" class="tags-container"></div>
-            </div>
-            <div id="markdown-content"></div>
-        </main>
+        <main id="markdown-content" class="markdown-content"></main>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
-    <script>
-      const urlParams = new URLSearchParams(window.location.search);
-      const projectId = urlParams.get('id');
-      const converter = new showdown.Converter();
-
-      // Load all project data
-      fetch('projects.json')
-        .then(res => res.json())
-        .then(projects => {
-          const project = projects.find(p => p.id === projectId);
-          if (!project) return; // Handle case where project is not found
-
-          // Populate the header
-          document.title = project.title;
-          document.getElementById('project-title').innerText = project.title;
-          document.getElementById('github-link').href = project.github_url;
-          
-          const tagsContainer = document.getElementById('project-tags');
-          project.tags.forEach(tag => {
-              const tagEl = document.createElement('span');
-              tagEl.className = 'tag';
-              tagEl.innerText = tag;
-              tagsContainer.appendChild(tagEl);
-          });
-
-          // Fetch and render the correct markdown file
-          fetch(project.markdown_file)
-            .then(res => res.text())
-            .then(md => {
-                const html = converter.makeHtml(md);
-                const contentDiv = document.getElementById('markdown-content');
-                contentDiv.innerHTML = html;
-                generateTOC(contentDiv);
-            });
-        });
-
-      // Function to generate Table of Contents (Chapters)
-      function generateTOC(contentDiv) {
-        const tocList = document.getElementById('toc-list');
-        const headers = contentDiv.querySelectorAll('h2, h3'); // Finds your chapter titles
-        headers.forEach(header => {
-            const id = header.innerText.toLowerCase().replace(/\s+/g, '-');
-            header.id = id;
-            const listItem = document.createElement('li');
-            const link = document.createElement('a');
-            link.href = `#${id}`;
-            link.innerText = header.innerText;
-            listItem.appendChild(link);
-            tocList.appendChild(listItem);
-        });
-      }
-    </script>
+    <script src="main.js"></script>
 </body>
 </html>

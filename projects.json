@@ -1,38 +1,17 @@
 [
   {
-    "id": "gbm",
-    "title": "Geometric Brownian Motion for Price Simulation",
-    "ring": 1,
-    "category": "Foundations: Stochastic Processes",
-    "markdown_file": "projects/gbm.md",
-    "github_url": "https://github.com/your-username/gbm-project",
-    "tags": ["Stochastic Calculus", "Monte Carlo", "Python", "Risk Visualization"]
+    "id": "project1",
+    "title": "Project 1: Quantitative Trading Strategy",
+    "markdownFile": "projects/project1.md"
   },
   {
-    "id": "ar",
-    "title": "Autoregressive Models for Forecasting",
-    "ring": 2,
-    "category": "Classical Econometrics",
-    "markdown_file": "projects/ar.md",
-    "github_url": "https://github.com/your-username/ar-project",
-    "tags": ["Time Series", "Econometrics", "Python", "Momentum Strategy"]
+    "id": "project2",
+    "title": "Project 2: Risk Analysis System",
+    "markdownFile": "projects/project2.md"
   },
   {
-    "id": "fmh",
-    "title": "Fractal Market Hypothesis & Hurst Exponent",
-    "ring": 3,
-    "category": "Advanced Market Dynamics",
-    "markdown_file": "projects/fmh.md",
-    "github_url": "https://github.com/your-username/fmh-project",
-    "tags": ["Chaos Theory", "Hurst Exponent", "Regime Identification"]
-  },
-  {
-    "id": "deep-hedging",
-    "title": "Deep Learning for Gamma-Delta Hedging",
-    "ring": 4,
-    "category": "State-of-the-Art Machine Learning",
-    "markdown_file": "projects/deep-hedging.md",
-    "github_url": "https://github.com/your-username/deep-hedging-project",
-    "tags": ["Deep Learning", "Neural Networks", "PyTorch", "Risk Management"]
+    "id": "project3",
+    "title": "Project 3: A Third Project",
+    "markdownFile": "projects/project3.md"
   }
 ]
