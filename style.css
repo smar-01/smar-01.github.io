@@ -9,6 +9,7 @@ body {
     color: #333; /* Dark gray text for readability */
     margin: 0;
     padding: 0; /* Removed default body padding */
+    overflow-x: hidden; /* Prevents horizontal scrollbars */
 }
 
 .container {
@@ -20,8 +21,10 @@ body {
 /* --- Homepage Specific Styles --- */
 .homepage-header {
     text-align: center;
-    padding-top: 3rem; /* Pushes the header down from the top */
-    padding-bottom: 3rem;
+    padding-top: 3rem;
+    padding-bottom: 1rem; /* Reduced bottom padding to bring animation closer */
+    position: relative; /* Needed to keep it above the animation */
+    z-index: 10;
 }
 
 .homepage-header h1 {
@@ -35,46 +38,22 @@ body {
     margin-top: 0.5rem;
 }
 
-.project-list {
-    text-align: center;
-}
-
-.project-list ul {
-    list-style: none; /* Removes bullet points */
-    padding: 0;
-}
-
-.project-list li {
-    margin-bottom: 1.2rem;
-}
-
-.project-list a {
-    font-size: 1.25rem;
-    color: #0056b3;
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-.project-list a:hover {
-    text-decoration: underline;
-    color: #003d82;
-}
-
-/* NEW: Style for the category text on the homepage */
-.project-category {
-    font-size: 1rem;
-    color: #555;
-    font-style: italic;
-    margin-left: 8px;
+/* NEW: Styles for the particles.js container */
+#particles-js {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1; /* Place it behind the header */
 }
 
 
-/* --- Project Page Specific Styles --- */
+/* --- Project Page Specific Styles (No changes needed here) --- */
 
-/* A dedicated header for the home button */
 .project-page-header {
     width: 100%;
-    background-color: #fdfdfb; /* Slightly different color to create separation */
+    background-color: #fdfdfb;
     border-bottom: 1px solid #eee;
     padding: 1rem 0;
 }
@@ -87,7 +66,7 @@ body {
     background-color: rgba(0, 0, 0, 0.05);
     border-radius: 5px;
     transition: background-color 0.2s ease;
-    display: inline-block; /* Allows padding and background */
+    display: inline-block;
 }
 
 .home-button:hover {
@@ -96,17 +75,16 @@ body {
 
 .markdown-content {
     width: 100%;
-    line-height: 1.7; /* Improves readability */
+    line-height: 1.7;
 }
 
 .markdown-content h1 {
     border-bottom: 2px solid #eee;
     padding-bottom: 10px;
     margin-top: 0;
-    margin-bottom: 0.5rem; /* Reduced margin to bring tag closer */
+    margin-bottom: 0.5rem;
 }
 
-/* NEW: Style for the category tag box */
 .category-tag {
     display: inline-block;
     background-color: rgba(0, 0, 0, 0.05);
@@ -115,7 +93,7 @@ body {
     font-size: 0.9rem;
     font-weight: bold;
     color: #555;
-    margin-bottom: 2.5rem; /* Space between tag and first paragraph */
+    margin-bottom: 2.5rem;
 }
 
 .markdown-content h2 {
@@ -126,12 +104,11 @@ body {
     margin-bottom: 1rem;
 }
 
-/* Style for code blocks to look like they do in markdown */
 .markdown-content pre {
     background-color: #f4f4f4;
     padding: 1rem;
     border-radius: 5px;
-    overflow-x: auto; /* Adds scrollbar if code is wide */
+    overflow-x: auto;
 }
 
 .markdown-content code {
