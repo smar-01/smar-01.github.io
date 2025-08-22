@@ -1,0 +1,26 @@
+/* General styles */
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.6; }
+
+/* Project Page Layout */
+.project-container { display: flex; max-width: 1200px; margin: 2em auto; }
+.table-of-contents { flex: 0 0 200px; position: sticky; top: 2em; align-self: flex-start; }
+.project-content { flex-grow: 1; padding-left: 2em; }
+
+/* Header and Tags */
+.project-header { border-bottom: 1px solid #eee; padding-bottom: 1em; margin-bottom: 1em; }
+.home-button { text-decoration: none; color: #555; }
+.tags-container { margin-top: 1em; }
+.tag {
+    display: inline-block;
+    background-color: #f0f0f0;
+    border-radius: 15px; /* The "circle rectangle" */
+    padding: 5px 15px;
+    margin-right: 8px;
+    font-size: 0.85em;
+    color: #333;
+}
+
+/* Markdown Content styling */
+#markdown-content h2 { border-bottom: 1px solid #eee; padding-bottom: 0.3em; }
+#markdown-content code { background-color: #f0f0f0; padding: 2px 4px; border-radius: 4px; }
+#markdown-content pre { background-color: #f0f0f0; padding: 1em; border-radius: 4px; overflow-x: auto; }

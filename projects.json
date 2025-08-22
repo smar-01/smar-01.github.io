@@ -1,63 +1,38 @@
-{
-  "name": "Your Name",
-  "tagline": "Quant projects",
-  "categories": [
-    {
-      "id": "ml",
-      "label": "Machine Learning"
-    },
-    {
-      "id": "time-series",
-      "label": "Time Series"
-    },
-    {
-      "id": "derivatives",
-      "label": "Derivatives"
-    },
-    {
-      "id": "theory",
-      "label": "Market Theory"
-    }
-  ],
-  "projects": [
-    {
-      "title": "GBM Monte Carlo Simulator",
-      "slug": "gbm-monte-carlo",
-      "categories": [
-        "theory",
-        "time-series"
-      ],
-      "github": "https://github.com/you/gbm-monte-carlo",
-      "markdown": "projects/gbm-monte-carlo.md"
-    },
-    {
-      "title": "AR(p) Intraday Momentum",
-      "slug": "ar-intraday-momentum",
-      "categories": [
-        "time-series"
-      ],
-      "github": "https://github.com/you/ar-momentum",
-      "markdown": "projects/ar-intraday-momentum.md"
-    },
-    {
-      "title": "Deep Gamma-Delta Hedging",
-      "slug": "deep-gamma-delta-hedging",
-      "categories": [
-        "derivatives",
-        "ml"
-      ],
-      "github": "https://github.com/you/deep-hedging",
-      "markdown": "projects/deep-gamma-delta-hedging.md"
-    },
-    {
-      "title": "Fractal Market Regimes (Hurst)",
-      "slug": "fractal-market-regimes",
-      "categories": [
-        "theory",
-        "time-series"
-      ],
-      "github": "https://github.com/you/fractal-regimes",
-      "markdown": "projects/fractal-market-regimes.md"
-    }
-  ]
-}
+[
+  {
+    "id": "gbm",
+    "title": "Geometric Brownian Motion for Price Simulation",
+    "ring": 1,
+    "category": "Foundations: Stochastic Processes",
+    "markdown_file": "projects/gbm.md",
+    "github_url": "https://github.com/your-username/gbm-project",
+    "tags": ["Stochastic Calculus", "Monte Carlo", "Python", "Risk Visualization"]
+  },
+  {
+    "id": "ar",
+    "title": "Autoregressive Models for Forecasting",
+    "ring": 2,
+    "category": "Classical Econometrics",
+    "markdown_file": "projects/ar.md",
+    "github_url": "https://github.com/your-username/ar-project",
+    "tags": ["Time Series", "Econometrics", "Python", "Momentum Strategy"]
+  },
+  {
+    "id": "fmh",
+    "title": "Fractal Market Hypothesis & Hurst Exponent",
+    "ring": 3,
+    "category": "Advanced Market Dynamics",
+    "markdown_file": "projects/fmh.md",
+    "github_url": "https://github.com/your-username/fmh-project",
+    "tags": ["Chaos Theory", "Hurst Exponent", "Regime Identification"]
+  },
+  {
+    "id": "deep-hedging",
+    "title": "Deep Learning for Gamma-Delta Hedging",
+    "ring": 4,
+    "category": "State-of-the-Art Machine Learning",
+    "markdown_file": "projects/deep-hedging.md",
+    "github_url": "https://github.com/your-username/deep-hedging-project",
+    "tags": ["Deep Learning", "Neural Networks", "PyTorch", "Risk Management"]
+  }
+]
