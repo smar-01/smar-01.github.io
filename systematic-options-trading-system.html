@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>Derivatives C++ Data Pipeline</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="project-page-header">
+        <div class="container">
+            <a href="index.html" class="home-button">HOME</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <main class="markdown-content">
+
+
+<h1>Systematic Options Trading System</h1>
+<span class="category-tag">Signal Research</span><span class="category-tag">System Development</span>
+
+<p>
+    Project link: <a href="https://github.com/smar-01/avenor-system-public" target="_blank" rel="noopener noreferrer">GitHub</a>
+</p>
+
+<p>
+    Strategy targets (Mar - Apr):
+</p>
+<ul>
+    <li><strong>Starting cash allocation:</strong> $100,000</li>
+    <li><strong>Weekly Premium Capture:</strong> 0.3% to 0.4% of portfolio value</li>
+    <li><strong>Sharpe Ratio:</strong> 1.2</li>
+    <li><strong>Daily turnover:</strong> Averaged roughly 8%</li>
+    <li><strong>Max drawdown:</strong> 9%</li>
+    <li><strong>Risk Management Overlay:</strong> Automatically halted all new trades if the portfolio's unrealized drawdown exceeded a 10% threshold.</li>
+</ul>
+
+
+<p>
+    This project began with a profitable, discretionary options strategy that a partner and I were manually trading. The strategy was designed to generate consistent income from pricing inefficiencies in options on a specific long-term treasury bond ETF.
+</p>
+
+<p>
+    Order log snippet:
+</p>
+<img src="systematic-options-trading-system/1-1.png" style="width:60%; max-width:800px; display:block; margin:1em auto;">
+
+<p>
+    While the core logic was sound, manual execution was slow and repetitive, and could be systemized. I wanted to transform it into a fully systematic, automated process. This required a two-part effort: first, building a robust, fault-tolerant trading system from scratch, and second, automating our manual strategy onto the system with a set of precise rules that the system could execute.
+</p>
+
+<hr>
+
+<h2>Part 1: Building the Trading System</h2>
+<p>
+    The first and most critical step was to build a strong foundation that could run 24/7 without supervision. Instead of a single script, I made the system as a collection of three independent Linux systemd services, each with a single responsibility.
+</p>
+
+<p>
+    Error log (empty) snippet after 3 months of running continuously:
+</p>
+<img src="systematic-options-trading-system/1-2.png" style="width:60%; max-width:800px; display:block; margin:1em auto;">
+
+<h3>The Market Data Pillar</h3>
+<p>
+    This service gathers data for the system. Its only job is to connect to the brokerage API and continuously gather all necessary information: real-time market prices, the full option chain, current account balances, and existing positions. It collects this data and sends via ZeroMQ to the Strategy pillar.
+</p>
+
+<h3>The Strategy Pillar</h3>
+<p>
+    This service makes decisions. It subscribes to data from the Market Data pillar and contains all modelling logic. It is completely isolated - it cannot place trades or see the market directly. It analyzes data and, if the conditions are right, publishes a trade order.
+</p>
+
+<h3>The Execution Pillar</h3>
+<p>
+    This service executes orders. It subscribes to the trade orders published by the Strategy pillar. Once it receives an order, it logs the trade to an SQL server (for logs), sends it to the broker for execution, and then updates the database with the outcome.
+</p>
+
+<h3>System Integrity</h3>
+<p>
+    These three pillars communicate using a ZeroMQ message bus, which keeps them decoupled and resilient. To attempt to ensure no trade gets lost or duplicated, I used a PostgreSQL database with idempotency keys. Every trade decision was assigned a unique ID, and the database would reject any duplicates, guaranteeing transactional integrity even if a service crashed and restarted.
+</p>
+
+<hr>
+
+<h2>Part 2: Developing the Systematic Strategy</h2>
+<p>
+    With the core system built, the second phase was to translate our manual trading rules into an algorithm that the Strategy pillar could execute automatically.
+</p>
+
+<p>
+    Communications between pillars and order path snippet:
+</p>
+<img src="systematic-options-trading-system/1-3.png" style="width:60%; max-width:800px; display:block; margin:1em auto;">
+
+<h3>Options Income</h3>
+<p>
+    The system is an income-generating strategy. It runs a perpetual cycle of selling options premium against a long-term treasury bond ETF.
+</p>
+<p>
+    The strategy's execution is state-dependent, adapting its actions based on whether the portfolio is holding the underlying asset or cash.
+</p>
+
+<p>
+When holding the asset, the system generates income by selling covered calls. The selection of which option to sell is determined by a model that calculates the trade-off between premium income and the probability of assignment. When holding cash, entry signals are generated by a model that scans options for delta based inefficiencies, and finds new positions.
+</p>
+
+</main>
+    </div>
+</body>
+</html>
