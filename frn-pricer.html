@@ -36,7 +36,7 @@
 <h2>Methodology</h2>
 <p>
     I began by building a YieldCurve module. This class takes any discrete term structure and converts the nominal rates to their continuous equivalents. Linear and cubic-spline interpolation methods are available. 
-</p>g
+</p>
 <p>
     The FRNPricer class handles valuation logic. It computes the first-period forward rate directly from the spot rate. For discounting, each coupon and principal cash flow is discounted using the appropriate rate plus an optional credit spread (r_i + s). 
     
